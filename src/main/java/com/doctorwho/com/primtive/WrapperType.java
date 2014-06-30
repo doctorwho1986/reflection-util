@@ -13,6 +13,17 @@ public enum WrapperType {
 	public Class<?> getWrapperTypeClass() {
 		return this.classT;
 	}
+	
+	public static Class<?> getWrapperTypeClass(Class<?> classType) {
+		WrapperType[] wrapperTypes = WrapperType.values();
+		for (WrapperType wrapperType : wrapperTypes) {
+			if (classType.getName().equals(wrapperType.getWrapperTypeClass().getName())) {
+				return wrapperType.getWrapperTypeClass();
+			}
+		}
+		return null;
+	}
+	
 	private Class<?> classT;
 	private WrapperType(Class<?> classt){
 		this.classT = classt;

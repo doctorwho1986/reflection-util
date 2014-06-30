@@ -14,6 +14,24 @@ public enum Primitive {
 	public Class<?> getPrimitiveClass() {
 		return this.classT;
 	}
+	
+	public static Class<?> getPrimitiveClass(Class<?> classType) {
+		Primitive[] primitives = Primitive.values();
+		for (Primitive primitive : primitives) {
+			if (classType.getName().equals(primitive.getPrimitiveClass().getName()) ) {
+				return primitive.getPrimitiveClass();
+			}
+		}
+		
+		return null;
+	}
+	
+	public static Object newInstance(Class<?> classType,String value) {
+		if (classType == byte.class || classType == char.class ) {
+			throw new UnsupportedOperationException();
+		}
+		return null;
+	}
 	private Primitive(Class<?> classt){
 		this.classT = classt;
 	}
