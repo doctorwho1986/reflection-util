@@ -228,6 +228,12 @@ public final class MethodUtil {
 	public static Object invokeWriteMethod(Object obj, String propertyName, String value) {
 		//TODO
 		Method writeMethod = getWriteMethodByNoPrimParam(obj.getClass(), propertyName);
+		if (null != writeMethod  
+				&&  !PrimtiveUtil.isPrimitive(writeMethod.getParameterTypes()[0])
+				&&  !PrimtiveUtil.isWrapperType(writeMethod.getParameterTypes()[0]) 
+				&& String.class.getName().equals(writeMethod.getParameterTypes()[0].getName())) {
+			
+		}
 		return value;
 	}
 	
