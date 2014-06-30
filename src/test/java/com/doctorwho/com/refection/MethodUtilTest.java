@@ -8,6 +8,10 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.naming.InitialContext;
@@ -16,11 +20,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.doctorwho.com.refection.domain.BetGroupPlan;
 import com.doctorwho.com.refection.domain.BetOrder;
 import com.doctorwho.com.refection.domain.BetPlan;
+import com.doctorwho.com.refection.domain.Empty;
 
 public class MethodUtilTest {
 	private Class<?> classt;
+	private Class<?> betGroupPlanClass;
 	BeanInfo beanInfo ;
 	private PropertyDescriptor[] propertyDescriptors;
 	private String propertyName;
@@ -28,6 +37,7 @@ public class MethodUtilTest {
 	@Before
 	public void init() throws Throwable{
 		classt = BetPlan.class;
+		betGroupPlanClass = BetGroupPlan.class;
 		beanInfo = Introspector.getBeanInfo(classt);
 		propertyDescriptors = beanInfo.getPropertyDescriptors();
 		propertyName = "";
@@ -46,7 +56,7 @@ public class MethodUtilTest {
 		readMethod = null;
 		readMethod = MethodUtil.getReadMethod(classt, propertyName);
 		assertNotNull(readMethod);
-		assertEquals(0, readMethod.getParameterCount());
+		assertEquals(0, readMethod.getParameterTypes().length);
 		assertEquals(String.class, readMethod.getReturnType());
 		
 		propertyName = "OrderId";
@@ -58,6 +68,42 @@ public class MethodUtilTest {
 		readMethod = null;
 		readMethod = MethodUtil.getReadMethod(classt, propertyName);
 		assertNull(readMethod);
+		
+		propertyName = "orderId";
+		readMethod = null;
+		readMethod = MethodUtil.getReadMethod(betGroupPlanClass, propertyName);
+		assertNull(readMethod);
+		
+		
+		
+		propertyName = "planNo";
+		readMethod = null;
+		readMethod = MethodUtil.getReadMethod(betGroupPlanClass, propertyName);
+		assertNotNull(readMethod);
+		assertEquals(0, readMethod.getParameterTypes().length);
+		assertEquals(String.class, readMethod.getReturnType());
+		
+		propertyName = "title";
+		readMethod = null;
+		readMethod = MethodUtil.getReadMethod(betGroupPlanClass, propertyName);
+		assertNotNull(readMethod);
+		assertEquals(0, readMethod.getParameterTypes().length);
+		assertEquals(String.class, readMethod.getReturnType());
+		
+		
+		propertyName = "perAmount";
+		readMethod = null;
+		readMethod = MethodUtil.getReadMethod(betGroupPlanClass, propertyName);
+		assertNotNull(readMethod);
+		assertEquals(0, readMethod.getParameterTypes().length);
+		assertEquals(BigDecimal.class, readMethod.getReturnType());
+		
+		propertyName = "joinEndTime";
+		readMethod = null;
+		readMethod = MethodUtil.getReadMethod(betGroupPlanClass, propertyName);
+		assertNotNull(readMethod);
+		assertEquals(0, readMethod.getParameterTypes().length);
+		assertEquals(Calendar.class, readMethod.getReturnType());
 	}
 	
 	
@@ -77,33 +123,72 @@ public class MethodUtilTest {
 		list = MethodUtil.getWriteMethods(classt, propertyName);
 		assertEquals(1, list.size());
 		Method method = list.get(0);
-		assertEquals(1, method.getParameterCount());
+		assertEquals(1, method.getParameterTypes().length);
 		assertEquals(Long.class.getName(), method.getParameterTypes()[0].getName());
 		
+		
+		
+		propertyName = "orderId";
+		list.clear();
+		list = MethodUtil.getWriteMethods(betGroupPlanClass, propertyName);
+		assertEquals(1, list.size());
+		method = null;
+		method = list.get(0);
+		assertEquals(1, method.getParameterTypes().length);
+		assertEquals(Long.class.getName(), method.getParameterTypes()[0].getName());
+		
+		propertyName = "joinEndTime";
+		list.clear();
+		list = MethodUtil.getWriteMethods(betGroupPlanClass, propertyName);
+		assertEquals(1, list.size());
+		method = null;
+		method = list.get(0);
+		assertEquals(1, method.getParameterTypes().length);
+		assertEquals(Calendar.class.getName(), method.getParameterTypes()[0].getName());
+		
+		propertyName = "order";
+		list.clear();
+		list = MethodUtil.getWriteMethods(betGroupPlanClass, propertyName);
+		assertEquals(3, list.size());
 		
 	}
 	
 	
 	@Test
-	public void GetWriteMethod_1(){
+	public void GetWriteMethodByNoPrimParam(){
 		
 		String propertyName = "order";
 		
-		Method writeMethod = MethodUtil.getWriteMethod(classt, propertyName);
+		Method writeMethod = MethodUtil.getWriteMethodByNoPrimParam(classt, propertyName);
 		assertNotNull(writeMethod);
 		assertEquals(BetOrder.class.getName(), writeMethod.getParameterTypes()[0].getName());
 		
 		propertyName = "betCount";
 		writeMethod = null;
-		writeMethod = MethodUtil.getWriteMethod(classt, propertyName);
-		assertNotNull(writeMethod);
-		assertEquals(int.class.getName(),writeMethod.getParameterTypes()[0].getName());
+		writeMethod = MethodUtil.getWriteMethodByNoPrimParam(classt, propertyName);
+		assertNull(writeMethod);
 		
 		propertyName = "orderId";
 		writeMethod = null;
-		writeMethod = MethodUtil.getWriteMethod(classt, propertyName);
+		writeMethod = MethodUtil.getWriteMethodByNoPrimParam(classt, propertyName);
+		assertNull(writeMethod);
+		
+		propertyName = "orderId";
+		writeMethod = null;
+		writeMethod = MethodUtil.getWriteMethodByNoPrimParam(betGroupPlanClass, propertyName);
+		assertNull(writeMethod);
+		
+		propertyName = "betCount";
+		writeMethod = null;
+		writeMethod = MethodUtil.getWriteMethodByNoPrimParam(betGroupPlanClass, propertyName);
+		assertNull(writeMethod);
+		
+		propertyName = "order";
+		writeMethod = null;
+		writeMethod = MethodUtil.getWriteMethodByNoPrimParam(betGroupPlanClass, propertyName);
 		assertNotNull(writeMethod);
-		assertEquals(Long.class.getName(),writeMethod.getParameterTypes()[0].getName());
+		assertEquals(BetOrder.class.getName(),writeMethod.getParameterTypes()[0].getName());
+		assertEquals("setOrder", writeMethod.getName());
 
 	}
 	
@@ -151,6 +236,22 @@ public class MethodUtilTest {
 	}
 
 	@Test
+	public void testGetPropertyDescriptors(){
+		PropertyDescriptor[] descriptors = MethodUtil.getPropertyDescriptors(BetOrder.class);
+		assertEquals(7, descriptors.length);
+		
+		descriptors = MethodUtil.getPropertyDescriptors(BetPlan.class);
+		assertEquals(10, descriptors.length);
+		
+		descriptors = MethodUtil.getPropertyDescriptors(BetGroupPlan.class);
+		assertEquals(18, descriptors.length);
+		
+		descriptors = MethodUtil.getPropertyDescriptors(Empty.class);
+		assertEquals(0, descriptors.length);
+	}
+	
+	
+	@Test
 	public void testGetPropertyDescriptor() {
 		String propertyName = "";
 		PropertyDescriptor p = MethodUtil.getPropertyDescriptor(propertyDescriptors, propertyName);
@@ -169,6 +270,11 @@ public class MethodUtilTest {
 		propertyName = "orderId";
 		p = null;
 		p = MethodUtil.getPropertyDescriptor(propertyDescriptors, propertyName);
+		assertNotNull(p);
+		
+		propertyName = "orderId";
+		p = null;
+		p = MethodUtil.getPropertyDescriptor(MethodUtil.getPropertyDescriptors(BetGroupPlan.class), propertyName);
 		assertNotNull(p);
 	}
 
@@ -192,6 +298,23 @@ public class MethodUtilTest {
 		list.clear();
 	    list = MethodUtil.getMethodsByMethodName(classt.getDeclaredMethods(), methodName);
 		Assert.assertEquals(1, list.size());
+		
+		methodName = "setOrder";
+		list.clear();
+	    list = MethodUtil.getMethodsByMethodName(betGroupPlanClass.getDeclaredMethods(), methodName);
+		Assert.assertEquals(0, list.size());
+		
+		methodName = "setOrder";
+		List<Method> methodlList = new ArrayList<Method>();
+		methodlList.addAll(Arrays.asList(betGroupPlanClass.getDeclaredMethods()));
+		Class<?> supClass = betGroupPlanClass.getSuperclass();
+		while (null != supClass) {
+			methodlList.addAll(Arrays.asList(supClass.getDeclaredMethods()));
+			supClass = supClass.getSuperclass();
+		}
+		
+	    list = MethodUtil.getMethodsByMethodName(methodlList.toArray(new Method[methodlList.size()]), methodName);
+		Assert.assertEquals(3, list.size());
 	}
 	
 	@Test
@@ -227,8 +350,27 @@ public class MethodUtilTest {
 		
 		plan = null;
 	    plan = (BetPlan) newInstance;
-		
 		assertEquals(order.getId(), plan.getOrder().getId());
+		
+		Object betGroupPlan = betGroupPlanClass.newInstance();
+		BetGroupPlan before = (BetGroupPlan) betGroupPlan;
+		BetGroupPlan after = new BetGroupPlan();
+		after.setPlanNo("d1111");
+		after.setTitle("title");
+		BetOrder bOrder = new BetOrder();
+		bOrder.setId(135L);
+		bOrder.setSellChannel(166L);
+		after.setOrder(bOrder);
+	   	Object  aObject = JSON.toJSON(after);
+	   	System.out.println(aObject);
+		propertyName = "planNo";
+		MethodUtil.invokeWriteMethod(before, propertyName, new Object[]{"d1111"});
+		MethodUtil.invokeWriteMethod(before, "title", new Object[]{"title"});
+		MethodUtil.invokeWriteMethod(before, "order", new Object[]{bOrder});
+		Object fObject = JSON.toJSON(before);
+		assertEquals(aObject, fObject);
+		System.out.println(fObject);
+		
 	}
 
 }

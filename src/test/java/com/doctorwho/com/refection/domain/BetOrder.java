@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 
 public class BetOrder {
-	 private Long id;
+	   private Long id;
 
 	    private String orderNo;
 
