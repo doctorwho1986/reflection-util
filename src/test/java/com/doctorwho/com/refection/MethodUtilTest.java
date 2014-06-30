@@ -366,7 +366,7 @@ public class MethodUtilTest {
 		propertyName = "planNo";
 		MethodUtil.invokeWriteMethod(before, propertyName, new Object[]{"d1111"});
 		MethodUtil.invokeWriteMethod(before, "title", new Object[]{"title"});
-		MethodUtil.invokeWriteMethod(before, "order", new Object[]{bOrder});
+		MethodUtil.invokeWriteMethod(before, "order", bOrder);
 		Object fObject = JSON.toJSON(before);
 		assertEquals(aObject, fObject);
 		System.out.println(fObject);
