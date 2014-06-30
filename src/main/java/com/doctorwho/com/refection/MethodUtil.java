@@ -225,7 +225,7 @@ public final class MethodUtil {
 	}
 	
 	
-	public static Object invokeWriteMethod(Object obj, String propertyName, String value) {
+	public static Object invokeWriteMethod(Object obj, String propertyName, String value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		//TODO
 		Method writeMethod = getWriteMethodByNoPrimParam(obj.getClass(), propertyName);
 		if (null != writeMethod  
@@ -234,7 +234,7 @@ public final class MethodUtil {
 				&& String.class.getName().equals(writeMethod.getParameterTypes()[0].getName())) {
 			
 		}
-		return value;
+		return  writeMethod.invoke(obj, value);
 	}
 	
 	public static boolean isWriteMethod(Method method) {
