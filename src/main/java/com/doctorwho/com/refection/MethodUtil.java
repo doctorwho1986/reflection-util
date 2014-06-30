@@ -68,7 +68,13 @@ public final class MethodUtil {
 		String wirteMethodName = "set"
 							   +  propertyName.substring(0,1).toUpperCase()
 							   +  propertyName.substring(1);
-		writeMethods.addAll(getMethodsByMethodName(beanClass.getDeclaredMethods(), wirteMethodName));
+		List<Method> list = getMethodsByMethodName(beanClass.getDeclaredMethods(), wirteMethodName);
+		for (Method m : list) {
+			if (isWriteMethod(m)) {
+				writeMethods.add(m);
+			}
+		}
+		
 		return writeMethods;
 	}
 	
@@ -110,7 +116,7 @@ public final class MethodUtil {
 		}
 		
 		for (Method m : writeMethods) {
-			if (1 == m.getParameterCount()) {
+			if (isWriteMethod(m)) {
 				if (parameterType.getName().equals(m.getParameterTypes()[0].getName())) {
 					return m;
 				}
@@ -192,7 +198,17 @@ public final class MethodUtil {
 		return writeMethod.invoke(obj, arg);
 	}
 	
+	
+	public static boolean isWriteMethod(Method method) {
+		if (1 == method.getParameterTypes().length) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	
 	private MethodUtil(){
 		throw new UnsupportedOperationException("此类不能被继承和创造实体类");
-	};
+	}
 }
