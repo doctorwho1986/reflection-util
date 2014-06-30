@@ -8,9 +8,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import com.doctorwho.com.constant.ErrorCode;
 import com.doctorwho.com.primtive.Primitive;
+import com.doctorwho.com.primtive.PrimtiveUtil;
 import com.doctorwho.com.primtive.WrapperType;
 
 /**
@@ -59,7 +64,7 @@ public final class MethodUtil {
 			return writeMethods;
 		}
 		
-		PropertyDescriptor propertyDescriptor = getPropertyDescriptor(beanInfo.getPropertyDescriptors(), propertyName);
+		PropertyDescriptor propertyDescriptor = getPropertyDescriptor(getPropertyDescriptors(beanClass), propertyName);
 		
 		if (null == propertyDescriptor) {
 			return writeMethods;
@@ -68,7 +73,7 @@ public final class MethodUtil {
 		String wirteMethodName = "set"
 							   +  propertyName.substring(0,1).toUpperCase()
 							   +  propertyName.substring(1);
-		List<Method> list = getMethodsByMethodName(beanClass.getDeclaredMethods(), wirteMethodName);
+		List<Method> list = getMethodsByMethodName(beanClass.getMethods(), wirteMethodName);
 		for (Method m : list) {
 			if (isWriteMethod(m)) {
 				writeMethods.add(m);
@@ -85,11 +90,21 @@ public final class MethodUtil {
 	 * @param propertyName
 	 * @return
 	 */
-	public static Method getWriteMethod(Class<?> beanClass, String propertyName){
-		Field[] declaredFields = beanClass.getDeclaredFields();
+	public static Method getWriteMethodByNoPrimParam(Class<?> beanClass, String propertyName){
+		Set<Field> fields = new HashSet<Field>();
+		fields.addAll(Arrays.asList(beanClass.getDeclaredFields()));
+		
+		Class<?> child = beanClass;
+		Class<?> supper = child.getSuperclass();
+		while (null != supper && Object.class != supper) {
+			fields.addAll(Arrays.asList(supper.getDeclaredFields()));
+			child = supper;
+			supper = child.getSuperclass();
+		}
+		
 		Class<?> paraType = null;
-		for (Field f : declaredFields) {
-			if (propertyName.equals(f.getName())) {
+		for (Field f : fields) {
+			if (!PrimtiveUtil.isPrimitive(f.getType()) && !PrimtiveUtil.isWrapperType(f.getType())&& propertyName.equals(f.getName())) {
 				paraType = f.getType();
 				break;
 			}
@@ -99,13 +114,9 @@ public final class MethodUtil {
 			return getWriteMethod(beanClass, propertyName, paraType);
 		}
 		
-		Method writeMethod = getWriteMethodByPrimitiveParam(beanClass, propertyName);
 		
-		if (null != writeMethod) {
-			return writeMethod;
-		}
 				
-		return getWriteMethodByWrapperTypeParam(beanClass, propertyName);
+		return null;
 	}
 	
 	
@@ -116,10 +127,8 @@ public final class MethodUtil {
 		}
 		
 		for (Method m : writeMethods) {
-			if (isWriteMethod(m)) {
-				if (parameterType.getName().equals(m.getParameterTypes()[0].getName())) {
-					return m;
-				}
+			if (parameterType.getName().equals(m.getParameterTypes()[0].getName())) {
+				return m;
 			}
 		}
 		return null;
@@ -159,34 +168,51 @@ public final class MethodUtil {
 		if (null == beanInfo) {
 			return null;
 		}
-		
-		return beanInfo.getPropertyDescriptors();
+		PropertyDescriptor[] p = beanInfo.getPropertyDescriptors();
+		PropertyDescriptor[] result = new PropertyDescriptor[p.length-1];
+		for (int i = 0, length = p.length,j = 0; i < length; i++) {
+			if ("class".equals(p[i].getName())) {
+				continue;
+			}
+			result[j++] = p[i];
+		}
+		return result;
 	}
 	
 	
 	public static Method getWriteMethodByPrimitiveParam(Class<?> beanClass, String propertyName){
+		List<Method> methods = new ArrayList<Method>();
 		Primitive[] primitives = Primitive.values();
 		Method writeMethod = null;
 		for (Primitive primitive : primitives) {
 			writeMethod = getWriteMethod(beanClass, propertyName, primitive.getPrimitiveClass());
 			if (null != writeMethod) {
-				return writeMethod;
+				methods.add(writeMethod);
 			}
 		}
-		return writeMethod;
+		
+		if (1 != methods.size()) {
+			throw new UnsupportedOperationException("MethodUtil.getWriteMethodByPrimitiveParam" + ErrorCode.too_many_result);
+		}
+		return methods.get(0);
 	}
 	
 	
 	public static Method getWriteMethodByWrapperTypeParam(Class<?> beanClass, String propertyName){
+		List<Method> methods = new ArrayList<Method>();
 		Method writeMethod = null;
 		WrapperType[] wrapperTypes = WrapperType.values();
 		for (WrapperType wrapperType : wrapperTypes) {
 			writeMethod = getWriteMethod(beanClass, propertyName, wrapperType.getWrapperTypeClass());
 			if (null != writeMethod) {
-				return writeMethod;
+				methods.add(writeMethod);
 			}
 		}
-		return writeMethod;		
+		
+		if (1 != methods.size()) {
+			throw new UnsupportedOperationException("MethodUtil.getWriteMethodByWrapperTypeParam" + ErrorCode.too_many_result);
+		}
+		return methods.get(0);		
 	}
 	
 	public static Object invokeWriteMethod(Object obj,String propertyName ,Object... arg) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
