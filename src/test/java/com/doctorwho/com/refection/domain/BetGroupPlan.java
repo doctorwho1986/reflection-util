@@ -5,7 +5,7 @@ import java.util.Calendar;
 
 /**
  * project_name :reflection-util
- * @author kexiang.cui
+ *  @author doctorWho
  * create time :2014-6-30 上午9:31:13
  * 
  */

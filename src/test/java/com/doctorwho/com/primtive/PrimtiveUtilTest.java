@@ -6,7 +6,7 @@ import org.junit.Test;
 
 /**
  * project_name :reflection-util
- * @author kexiang.cui
+ *  @author doctorWho
  * create time :2014-6-30 上午10:20:20
  * 
  */
