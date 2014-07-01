@@ -24,6 +24,45 @@ public enum WrapperType {
 		return null;
 	}
 	
+	public static Object newIntance(Class<?> classType, String value) {
+		if (classType == Byte.class || classType == Character.class) {
+			throw new UnsupportedOperationException();
+		}
+		
+		if (classType == Double.class) {
+			return Double.valueOf(value);
+		}
+		
+		if (classType == Float.class) {
+			return Float.valueOf(value);
+		}
+		
+		if (classType == Integer.class) {
+			return Integer.valueOf(value);
+		}
+		
+		if (classType == Long.class) {
+			return Long.valueOf(value);
+		}
+		
+		if (classType == Short.class) {
+			return Short.valueOf(value);
+		}
+		
+		if (classType == Boolean.class) {
+			if ("1".equals(value)) {
+				return Boolean.TRUE;
+			}
+			
+			if ("0".equals(value)) {
+				return Boolean.FALSE;
+			}
+			
+			return Boolean.valueOf(value);
+		}
+		return null;
+	}
+	
 	private Class<?> classT;
 	private WrapperType(Class<?> classt){
 		this.classT = classt;
