@@ -1,5 +1,12 @@
 package com.doctorwho.com.primtive;
 
+/**
+ * 
+ * project_name :reflection-util
+ * @author doctorWho
+ *
+ */
+
 public enum Primitive {
 	p_byte(byte.class),
 	p_char(char.class),
@@ -30,6 +37,37 @@ public enum Primitive {
 		if (classType == byte.class || classType == char.class ) {
 			throw new UnsupportedOperationException();
 		}
+		
+		if (classType == double.class) {
+			return Double.parseDouble(value);
+		}
+		
+		if (classType == float.class) {
+			return Float.parseFloat(value);
+		}
+		
+		if (classType == int.class) {
+			return Integer.parseInt(value);
+		}
+		
+		if (classType == long.class) {
+			return Long.parseLong(value);
+		}
+		
+		if (classType == short.class) {
+			return Short.parseShort(value);
+		}
+		
+		if (classType == boolean.class) {
+			if ("1".equals(value)) {
+				return true;
+			}
+			if ("0".equals(value)) {
+				return false;
+			}
+			return Boolean.parseBoolean(value);
+		}
+		
 		return null;
 	}
 	private Primitive(Class<?> classt){
